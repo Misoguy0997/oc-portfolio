@@ -3,7 +3,7 @@ const SUPABASE_URL = 'https://yayvkafolgscdoaelgyg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
 // [수정] 변수 이름을 'supabaseClient' (또는 다른 이름)로 변경합니다.
 // (참고: 오른쪽의 'supabase'는 CDN 스크립트가 제공하는 전역 객체입니다.)
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ==================== 
 // Global State
@@ -20,7 +20,7 @@ let currentImageBase64 = null;
 async function fetchCharacters() {
     try {
         showLoading();
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('characters')
             .select('*')
             .order('createdAt', { ascending: false });
@@ -40,7 +40,7 @@ async function fetchCharacters() {
 async function createCharacter(characterData) {
     try {
         showLoading();
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('characters')
             .insert(characterData);
 
@@ -59,7 +59,7 @@ async function createCharacter(characterData) {
 async function updateCharacter(id, characterData) {
     try {
         showLoading();
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('characters')
             .update(characterData)
             .eq('id', id);
@@ -79,7 +79,7 @@ async function updateCharacter(id, characterData) {
 async function deleteCharacter(id) {
     try {
         showLoading();
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('characters')
             .delete()
             .eq('id', id);
@@ -233,7 +233,7 @@ async function handleLogin(event) {
     const errorMsg = document.getElementById('login-error-msg');
 
     try {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabaseClient.auth.signInWithPassword({
             email: email,
             password: password,
         });
@@ -254,7 +254,7 @@ async function handleLogin(event) {
 
 async function handleLogout() {
     showLoading();
-    await supabase.auth.signOut();
+    await supabaseClient.auth.signOut();
     hideLoading();
     // UI 갱신 (onAuthStateChange가 처리)
 }
@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     initSmoothScroll();
     
     // (중요) 인증 상태가 변경될 때마다 UI를 갱신합니다.
-    supabase.auth.onAuthStateChange((event, session) => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
         // [수정] session이 null일 수 있으므로, user 객체를 안전하게 추출합니다.
         const user = session ? session.user : null;
         setupUIForUser(user);
