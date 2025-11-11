@@ -80,7 +80,7 @@ async function updateCharacter(id, characterData) {
         
         if (response.ok) {
             showNotification('Character updated successfully!', 'success');
-            return await response.json();
+            return true; // <-- 'return=minimal'이므로 JSON 파싱 불필요
         } else {
             throw new Error('Failed to update character');
         }
