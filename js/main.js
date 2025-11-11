@@ -256,23 +256,18 @@ function closeCharacterModal() {
     document.body.style.overflow = '';
 }
 
-// main.js 파일의 openEditModal 함수를 이 코드로 교체하세요.
-
 function openEditModal(characterId = null) {
-    
-    // --- 🕵️‍♂️ 디버깅을 위한 코드 ---
-    console.log('--- 1. 수정 모달 열기 시도 ---');
-    console.log('클릭된 ID (타입:', typeof characterId, '):', characterId);
-    console.log('현재 characters 배열:', characters);
-    // --- 디버깅 종료 ---
-
     currentEditId = characterId;
     currentImageBase64 = null;
     
     const modal = document.getElementById('edit-modal');
     const title = document.getElementById('edit-modal-title');
     const form = document.getElementById('character-form');
-    // ... (이하 폼 요소들) ...
+    const nameInput = document.getElementById('character-name');
+    const descInput = document.getElementById('character-description');
+    const imageUrlInput = document.getElementById('character-image-url');
+    const imagePreview = document.getElementById('image-preview');
+    const previewImage = document.getElementById('preview-image');
     const fileNameSpan = document.getElementById('file-name');
     
     // Reset form
@@ -280,15 +275,10 @@ function openEditModal(characterId = null) {
     imagePreview.classList.remove('active');
     fileNameSpan.textContent = 'No file chosen';
     
-    if (characterId) { // <-- 이 값이 'falsy'인지 확인
+    if (characterId) {
         // Edit mode
-        console.log('--- 2. Edit Mode 진입 시도 ---');
-        const character = characters.find(c => c.id == characterId); // <-- '==' 비교
-        
-        console.log('찾은 캐릭터 객체:', character); // <-- 여기서 'undefined'가 뜰 수 있음
-
+        const character = characters.find(c => c.id == characterId);
         if (character) {
-            console.log('--- 3. 캐릭터 찾기 성공! 폼을 채웁니다. ---');
             title.textContent = 'Edit Character';
             nameInput.value = character.name;
             descInput.value = character.description || '';
@@ -299,13 +289,9 @@ function openEditModal(characterId = null) {
                 imagePreview.classList.add('active');
                 currentImageBase64 = character.imageUrl;
             }
-        } else {
-             console.error('--- 3. Edit Mode 실패! ID는 있으나 캐릭터를 찾지 못함 ---');
-             // 이 경우, 'Add New Character'가 아닌 빈 폼이 뜸
         }
     } else {
         // Add mode
-        console.error('--- 2. Add Mode 실행됨 (ID가 falsy 값임) ---'); // <-- 아마 이 로그가 뜰 것입니다.
         title.textContent = 'Add New Character';
     }
     
