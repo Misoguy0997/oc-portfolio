@@ -1,6 +1,6 @@
 // js/main.js 파일 맨 위에 추가
 const SUPABASE_URL = 'https://yayvkafolgscdoaelgyg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
 // [수정] 변수 이름을 'supabaseClient' (또는 다른 이름)로 변경합니다.
 // (참고: 오른쪽의 'supabase'는 CDN 스크립트가 제공하는 전역 객체입니다.)
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
