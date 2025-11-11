@@ -1,7 +1,7 @@
 // js/main.js 파일 맨 위에 추가
 const SUPABASE_URL = 'https://yayvkafolgscdoaelgyg.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
-const API_ENDPOINT = `${SUPABASE_URL}/rest/v1/characters`; // 'characters' 테이블 주소
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ==================== 
 // Global State
@@ -12,24 +12,24 @@ let currentEditId = null;
 let currentImageBase64 = null;
 
 // ==================== 
-// API Functions
+// API Functions (supabase-js 버전으로 교체)
 // ====================
 
 async function fetchCharacters() {
     try {
         showLoading();
-        // 1. 주소 변경 및 정렬 파라미터 추가
-        const response = await fetch(`${API_ENDPOINT}?select=*&order=createdAt.desc`, {
-            headers: {
-                'apikey': SUPABASE_KEY, // 2. API 키 헤더에 추가
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
-        });
-        const data = await response.json();
-        characters = data || []; // 3. Supabase는 data.data가 아닌 data에 바로 배열을 줍니다.
+        const { data, error } = await supabase
+            .from('characters')
+            .select('*')
+            .order('createdAt', { ascending: false });
+
+        if (error) throw error;
+        characters = data || [];
         return characters;
     } catch (error) {
-        // ... (기존과 동일)
+        console.error('Error fetching characters:', error);
+        showNotification('Failed to load characters', 'error');
+        return [];
     } finally {
         hideLoading();
     }
@@ -38,55 +38,36 @@ async function fetchCharacters() {
 async function createCharacter(characterData) {
     try {
         showLoading();
-        const response = await fetch(API_ENDPOINT, { // 1. 주소 변경
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_KEY, // 2. API 키 헤더에 추가
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Prefer': 'return=minimal' // 3. (Supabase) 생성 후 데이터를 다시 안 받아오게 설정
-            },
-            body: JSON.stringify(characterData)
-        });
+        const { error } = await supabase
+            .from('characters')
+            .insert(characterData);
 
-        if (response.ok) {
-            showNotification('Character created successfully!', 'success');
-            return true; // 원본과 거의 동일
-        } else {
-            throw new Error('Failed to create character');
-        }
+        if (error) throw error;
+        showNotification('Character created successfully!', 'success');
+        return true;
     } catch (error) {
-        // ... (기존과 동일)
+        console.error('Error creating character:', error.message);
+        showNotification('Failed to create character. Check permissions.', 'error');
+        throw error;
     } finally {
         hideLoading();
     }
 }
 
-// main.js 파일의 이 함수를 교체하세요
 async function updateCharacter(id, characterData) {
     try {
         showLoading();
-        // 1. URL과 Method를 Supabase에 맞게 수정 (PATCH 사용)
-        const response = await fetch(`${API_ENDPOINT}?id=eq.${id}`, {
-            method: 'PATCH', // PUT 대신 PATCH 사용
-            headers: {
-                'Content-Type': 'application/json',
-                'apikey': SUPABASE_KEY, // 2. API 키 헤더 추가
-                'Authorization': `Bearer ${SUPABASE_KEY}`,
-                'Prefer': 'return=minimal'
-            },
-            body: JSON.stringify(characterData)
-        });
-        
-        if (response.ok) {
-            showNotification('Character updated successfully!', 'success');
-            return true; // <-- 'return=minimal'이므로 JSON 파싱 불필요
-        } else {
-            throw new Error('Failed to update character');
-        }
+        const { error } = await supabase
+            .from('characters')
+            .update(characterData)
+            .eq('id', id);
+
+        if (error) throw error;
+        showNotification('Character updated successfully!', 'success');
+        return true;
     } catch (error) {
-        console.error('Error updating character:', error);
-        showNotification('Failed to update character', 'error');
+        console.error('Error updating character:', error.message);
+        showNotification('Failed to update character. Check permissions.', 'error');
         throw error;
     } finally {
         hideLoading();
@@ -96,29 +77,17 @@ async function updateCharacter(id, characterData) {
 async function deleteCharacter(id) {
     try {
         showLoading();
-        
-        // 1. URL을 Supabase 쿼리 형식으로 변경합니다.
-        //    (id가 일치하는 row를 지정합니다)
-        const response = await fetch(`${API_ENDPOINT}?id=eq.${id}`, {
-            method: 'DELETE',
-            headers: {
-                // 2. 인증을 위한 API 키를 헤더에 추가합니다.
-                'apikey': SUPABASE_KEY,
-                'Authorization': `Bearer ${SUPABASE_KEY}`
-            }
-        });
-        
-        // 3. Supabase는 성공 시 204 (No Content)를 반환하므로
-        //    기존 로직(response.ok || response.status === 204)이 그대로 잘 작동합니다.
-        if (response.ok || response.status === 204) {
-            showNotification('Character deleted successfully!', 'success');
-            return true;
-        } else {
-            throw new Error('Failed to delete character');
-        }
+        const { error } = await supabase
+            .from('characters')
+            .delete()
+            .eq('id', id);
+
+        if (error) throw error;
+        showNotification('Character deleted successfully!', 'success');
+        return true;
     } catch (error) {
-        console.error('Error deleting character:', error);
-        showNotification('Failed to delete character', 'error');
+        console.error('Error deleting character:', error.message);
+        showNotification('Failed to delete character. Check permissions.', 'error');
         throw error;
     } finally {
         hideLoading();
@@ -243,6 +212,66 @@ function renderAdminGrid() {
             confirmDelete(char.id, char.name);
         });
     });
+}
+
+// ==================== 
+// Auth Functions (새로 추가)
+// ====================
+
+function closeLoginModal() {
+    document.getElementById('login-modal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    showLoading();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    const errorMsg = document.getElementById('login-error-msg');
+
+    try {
+        const { error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        });
+
+        if (error) throw error;
+
+        // 성공 시 모달 닫고 UI 갱신 (onAuthStateChange가 처리)
+        closeLoginModal();
+        errorMsg.style.display = 'none';
+    } catch (error) {
+        console.error('Login error:', error.message);
+        errorMsg.textContent = 'Login failed: ' + error.message;
+        errorMsg.style.display = 'block';
+    } finally {
+        hideLoading();
+    }
+}
+
+async function handleLogout() {
+    showLoading();
+    await supabase.auth.signOut();
+    hideLoading();
+    // UI 갱신 (onAuthStateChange가 처리)
+}
+
+// 이 함수가 로그인 상태에 따라 UI를 변경합니다.
+function setupUIForUser(user) {
+    if (user) {
+        // 로그인 상태
+        document.getElementById('nav-login-btn').style.display = 'none';
+        document.getElementById('nav-logout-btn').style.display = 'block';
+        document.getElementById('nav-manage-link').style.display = 'block';
+        document.getElementById('admin').style.display = 'block'; // Admin 섹션 보이기
+    } else {
+        // 로그아웃 상태
+        document.getElementById('nav-login-btn').style.display = 'block';
+        document.getElementById('nav-logout-btn').style.display = 'none';
+        document.getElementById('nav-manage-link').style.display = 'none';
+        document.getElementById('admin').style.display = 'none'; // Admin 섹션 숨기기
+    }
 }
 
 // ==================== 
@@ -537,6 +566,16 @@ function initSmoothScroll() {
 // ====================
 
 function initEventListeners() {
+    // Login modal
+    document.getElementById('nav-login-btn').addEventListener('click', () => {
+    document.getElementById('login-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+    });
+    
+    document.getElementById('close-login-modal').addEventListener('click', closeLoginModal);
+    document.getElementById('login-form').addEventListener('submit', handleLogin);
+    document.getElementById('nav-logout-btn').addEventListener('click', handleLogout);
+    
     // Character modal
     document.getElementById('close-modal').addEventListener('click', closeCharacterModal);
     document.getElementById('character-modal').addEventListener('click', function(e) {
@@ -607,6 +646,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Initialize
     initEventListeners();
     initSmoothScroll();
+    
+    // (중요) 인증 상태가 변경될 때마다 UI를 갱신합니다.
+    supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+            setupUIForUser(session.user);
+        } else if (event === 'SIGNED_OUT') {
+            setupUIForUser(null);
+        }
+    });
+    
     await loadAndRenderAll();
     
     console.log('Character Portfolio initialized successfully!');
