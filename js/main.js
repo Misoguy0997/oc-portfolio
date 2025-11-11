@@ -377,6 +377,8 @@ function handleImageUpload(event) {
 // Form Submission
 // ====================
 
+// main.js의 handleFormSubmit 함수를 이 코드로 교체하세요.
+
 async function handleFormSubmit(event) {
     event.preventDefault();
     
@@ -389,19 +391,27 @@ async function handleFormSubmit(event) {
         return;
     }
     
-    const characterData = {
-        name,
-        description,
-        imageUrl,
-        createdAt: new Date().toISOString()
-    };
-    
     try {
         if (currentEditId) {
-            // Update existing character
-            await updateCharacter(currentEditId, characterData);
+            // --- [수정됨] UPDATE (수정) 로직 ---
+            // 'createdAt'이 빠진 업데이트용 객체를 만듭니다.
+            const updatedData = {
+                name,
+                description,
+                imageUrl
+                // (참고: Supabase는 'updated_at' 필드를 자동으로 갱신합니다)
+            };
+            await updateCharacter(currentEditId, updatedData);
+
         } else {
-            // Create new character
+            // --- [기존] CREATE (생성) 로직 ---
+            // 'createdAt'이 포함된 생성용 객체를 만듭니다.
+            const characterData = {
+                name,
+                description,
+                imageUrl,
+                createdAt: new Date().toISOString()
+            };
             await createCharacter(characterData);
         }
         
