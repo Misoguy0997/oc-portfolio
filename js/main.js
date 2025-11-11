@@ -62,12 +62,19 @@ async function createCharacter(characterData) {
     }
 }
 
+// main.js 파일의 이 함수를 교체하세요
 async function updateCharacter(id, characterData) {
     try {
         showLoading();
-        const response = await fetch(`tables/characters/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+        // 1. URL과 Method를 Supabase에 맞게 수정 (PATCH 사용)
+        const response = await fetch(`${API_ENDPOINT}?id=eq.${id}`, {
+            method: 'PATCH', // PUT 대신 PATCH 사용
+            headers: {
+                'Content-Type': 'application/json',
+                'apikey': SUPABASE_KEY, // 2. API 키 헤더 추가
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Prefer': 'return=minimal'
+            },
             body: JSON.stringify(characterData)
         });
         
