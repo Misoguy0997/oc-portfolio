@@ -1,6 +1,8 @@
 // js/main.js 파일 맨 위에 추가
 const SUPABASE_URL = 'https://yayvkafolgscdoaelgyg.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
+const SUPABASE_KEY = 'eyJhbGciOiUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlheXZrYWZvbGdzY2RvYWVsZ3lnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI4Njg3MTMsImV4cCI6MjA3ODQ0NDcxM30.OZOWP78fDGRrCV_yWBnQMGryLgyCbpdNbl-01aAL5fs';
+// [수정] 변수 이름을 'supabaseClient' (또는 다른 이름)로 변경합니다.
+// (참고: 오른쪽의 'supabase'는 CDN 스크립트가 제공하는 전역 객체입니다.)
 const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 // ==================== 
@@ -606,6 +608,7 @@ function initEventListeners() {
         if (e.key === 'Escape') {
             closeCharacterModal();
             closeEditModal();
+            closeLoginModal();
         }
     });
 }
@@ -649,11 +652,9 @@ document.addEventListener('DOMContentLoaded', async function() {
     
     // (중요) 인증 상태가 변경될 때마다 UI를 갱신합니다.
     supabase.auth.onAuthStateChange((event, session) => {
-        if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-            setupUIForUser(session.user);
-        } else if (event === 'SIGNED_OUT') {
-            setupUIForUser(null);
-        }
+        // [수정] session이 null일 수 있으므로, user 객체를 안전하게 추출합니다.
+        const user = session ? session.user : null;
+        setupUIForUser(user);
     });
     
     await loadAndRenderAll();
