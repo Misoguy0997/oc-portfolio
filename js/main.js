@@ -129,9 +129,14 @@ async function deleteCharacter(id) {
 // UI Rendering Functions
 // ====================
 
+// main.js의 renderCharacterGallery 함수를 이 코드로 교체하세요.
+
 function renderCharacterGallery() {
     const grid = document.getElementById('character-grid');
     
+    // 1. innerHTML 대신 grid를 비웁니다.
+    grid.innerHTML = ''; 
+
     if (characters.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 4rem 2rem; color: var(--text-secondary);">
@@ -143,31 +148,49 @@ function renderCharacterGallery() {
         return;
     }
     
-    grid.innerHTML = characters.map(char => {
+    // 2. 각 캐릭터를 순회하며 DOM 요소를 직접 만듭니다.
+    characters.forEach(char => {
         const excerpt = char.description ? 
             char.description.split('\n')[0].substring(0, 150) + '...' : 
             'No description available';
         
-        return `
-            <div class="character-card" onclick="openCharacterModal('${char.id}')">
-                <div class="character-card-image">
-                    ${char.imageUrl ? 
-                        `<img src="${char.imageUrl}" alt="${char.name}">` :
-                        `<i class="fas fa-user placeholder-icon"></i>`
-                    }
-                </div>
-                <div class="character-card-content">
-                    <h3 class="character-card-title">${char.name}</h3>
-                    <p class="character-card-excerpt">${excerpt}</p>
-                </div>
+        // 3. 카드 요소 생성
+        const card = document.createElement('div');
+        card.className = 'character-card';
+        
+        // 4. onclick 속성 대신 addEventListener 사용
+        //    이렇게 하면 char.id가 어떤 값이든 안전합니다.
+        card.addEventListener('click', () => {
+            openCharacterModal(char.id);
+        });
+
+        // 5. 카드 내부 HTML 설정
+        card.innerHTML = `
+            <div class="character-card-image">
+                ${char.imageUrl ? 
+                    `<img src="${char.imageUrl}" alt="${char.name}">` :
+                    `<i class="fas fa-user placeholder-icon"></i>`
+                }
+            </div>
+            <div class="character-card-content">
+                <h3 class="character-card-title">${char.name}</h3>
+                <p class="character-card-excerpt">${excerpt}</p>
             </div>
         `;
-    }).join('');
+        
+        // 6. 완성된 카드를 grid에 추가
+        grid.appendChild(card);
+    });
 }
+
+// main.js의 renderAdminGrid 함수를 이 코드로 교체하세요.
 
 function renderAdminGrid() {
     const grid = document.getElementById('admin-grid');
     
+    // 1. innerHTML 대신 grid를 비웁니다.
+    grid.innerHTML = ''; 
+
     if (characters.length === 0) {
         grid.innerHTML = `
             <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-secondary);">
@@ -177,8 +200,14 @@ function renderAdminGrid() {
         return;
     }
     
-    grid.innerHTML = characters.map(char => `
-        <div class="admin-card">
+    // 2. 각 캐릭터를 순회하며 DOM 요소를 직접 만듭니다.
+    characters.forEach(char => {
+        // 3. 어드민 카드 요소 생성
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+
+        // 4. 어드민 카드 내부 HTML 설정
+        card.innerHTML = `
             <div class="admin-card-header">
                 <div class="admin-card-thumbnail">
                     ${char.imageUrl ? 
@@ -191,15 +220,29 @@ function renderAdminGrid() {
                 </div>
             </div>
             <div class="admin-card-actions">
-                <button class="btn btn-secondary btn-sm" onclick="openEditModal('${char.id}')">
+                <button class="btn btn-secondary btn-sm" id="edit-btn-${char.id}">
                     <i class="fas fa-edit"></i> Edit
                 </button>
-                <button class="btn btn-danger btn-sm" onclick="confirmDelete('${char.id}', '${char.name}')">
+                <button class="btn btn-danger btn-sm" id="delete-btn-${char.id}">
                     <i class="fas fa-trash"></i> Delete
                 </button>
             </div>
-        </div>
-    `).join('');
+        `;
+        
+        // 5. 완성된 카드를 grid에 추가
+        grid.appendChild(card);
+
+        // 6. (가장 중요) ID로 버튼을 찾아서 addEventListener를 안전하게 연결합니다.
+        const editButton = card.querySelector(`#edit-btn-${char.id}`);
+        editButton.addEventListener('click', () => {
+            openEditModal(char.id);
+        });
+
+        const deleteButton = card.querySelector(`#delete-btn-${char.id}`);
+        deleteButton.addEventListener('click', () => {
+            confirmDelete(char.id, char.name);
+        });
+    });
 }
 
 // ==================== 
