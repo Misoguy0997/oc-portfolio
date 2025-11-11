@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Original Character Portfolio</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h1>OC Portfolio</h1>
+            </div>
+            <div class="nav-links">
+                <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#admin" class="nav-link admin-link">
+                    <i class="fas fa-cog"></i> Manage
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Original Character Portfolio</h1>
+            <p class="hero-subtitle">A showcase of unique characters and their stories</p>
+            <a href="#gallery" class="hero-btn">Explore Characters</a>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section id="gallery">
+        <div class="container">
+            <h2 class="section-title">Character Gallery</h2>
+            <div id="character-grid" class="character-grid">
+                <!-- Characters will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Character Detail Modal -->
+    <div id="character-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <div class="modal-image">
+                    <img id="modal-character-image" src="" alt="">
+                </div>
+                <div class="modal-info">
+                    <h2 id="modal-character-name"></h2>
+                    <div id="modal-character-description" class="character-description"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin/CMS Section -->
+    <section id="admin">
+        <div class="container">
+            <h2 class="section-title">Character Management</h2>
+            <p class="admin-subtitle">Add, edit, or delete character entries</p>
+            
+            <button id="add-character-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Character
+            </button>
+
+            <div id="admin-grid" class="admin-grid">
+                <!-- Admin character cards will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Add/Edit Character Modal -->
+    <div id="edit-modal" class="modal">
+        <div class="modal-content edit-modal-content">
+            <button class="modal-close" id="close-edit-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <h2 id="edit-modal-title">Add New Character</h2>
+                <form id="character-form">
+                    <div class="form-group">
+                        <label for="character-name">Character Name *</label>
+                        <input type="text" id="character-name" required placeholder="e.g., Anya the Archer">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="character-description">Description *</label>
+                        <textarea id="character-description" rows="8" required placeholder="Tell us about your character..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="character-image">Character Image</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="character-image" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-secondary" id="upload-btn">
+                                <i class="fas fa-upload"></i> Choose Image
+                            </button>
+                            <span id="file-name" class="file-name">No file chosen</span>
+                        </div>
+                        <div id="image-preview" class="image-preview">
+                            <img id="preview-image" src="" alt="">
+                        </div>
+                        <input type="hidden" id="character-image-url">
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Character
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancel-edit">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loading" class="loading-spinner" style="display: none;">
+        <div class="spinner"></div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Original Character Portfolio. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
