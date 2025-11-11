@@ -18,7 +18,7 @@
             </div>
             <div class="nav-links">
                 <a href="#gallery" class="nav-link">Gallery</a>
-                <a href="#admin" class="nav-link admin-link">
+                <a href="#admin" id="nav-manage-link" class="nav-link admin-link" style="display: none;">
                     <i class="fas fa-cog"></i> Manage
                 </a>
 
@@ -66,7 +66,7 @@
     </div>
 
     <!-- Admin/CMS Section -->
-    <section id="admin" style="display: none;"></section>>
+    <section id="admin" style="display: none;">
         <div class="container">
             <h2 class="section-title">Character Management</h2>
             <p class="admin-subtitle">Add, edit, or delete character entries</p>
@@ -76,8 +76,7 @@
             </button>
 
             <div id="admin-grid" class="admin-grid">
-                <!-- Admin character cards will be loaded here -->
-            </div>
+                </div>
         </div>
     </section>
 
@@ -139,32 +138,7 @@
         </div>
     </footer>
 
-    <div id="login-modal" class="modal">
-        <div class="modal-content edit-modal-content">
-            <button class="modal-close" id="close-login-modal">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="modal-body">
-                <h2 id="login-modal-title">Admin Login</h2>
-                <form id="login-form">
-                    <div class="form-group">
-                        <label for="login-email">Email</label>
-                        <input type="email" id="login-email" required placeholder="admin@example.com">
-                    </div>
-                    <div class="form-group">
-                        <label for="login-password">Password</label>
-                        <input type="password" id="login-password" required placeholder="••••••••">
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="fas fa-sign-in-alt"></i> Login
-                        </button>
-                    </div>
-                    <p id="login-error-msg" style="color: #e74c3c; display: none; margin-top: 1rem;"></p>
-                </form>
-            </div>
-        </div>
-    </div>
+    <div id="login-modal" class="modal"
 
     <script src="js/main.js"></script>
 </body>
