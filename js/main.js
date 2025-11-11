@@ -309,37 +309,20 @@ function openEditModal(characterId = null) {
     const nameInput = document.getElementById('character-name');
     const descInput = document.getElementById('character-description');
     const imageUrlInput = document.getElementById('character-image-url');
+    
+    // --- [수정] 아래 한 줄을 추가하세요 ---
     const imagePreview = document.getElementById('image-preview');
+    // ------------------------------------
+    
     const previewImage = document.getElementById('preview-image');
     const fileNameSpan = document.getElementById('file-name');
     
     // Reset form
     form.reset();
-    imagePreview.classList.remove('active');
+    imagePreview.classList.remove('active'); // <-- 이제 이 코드가 정상 작동합니다.
     fileNameSpan.textContent = 'No file chosen';
     
-    if (characterId) {
-        // Edit mode
-        const character = characters.find(c => c.id == characterId);
-        if (character) {
-            title.textContent = 'Edit Character';
-            nameInput.value = character.name;
-            descInput.value = character.description || '';
-            imageUrlInput.value = character.imageUrl || '';
-            
-            if (character.imageUrl) {
-                previewImage.src = character.imageUrl;
-                imagePreview.classList.add('active');
-                currentImageBase64 = character.imageUrl;
-            }
-        }
-    } else {
-        // Add mode
-        title.textContent = 'Add New Character';
-    }
-    
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
+    // ... (이하 코드는 그대로 둡니다) ...
 }
 
 function closeEditModal() {
