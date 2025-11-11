@@ -299,6 +299,8 @@ function closeCharacterModal() {
     document.body.style.overflow = '';
 }
 
+// main.js 파일의 openEditModal 함수 전체를 이 코드로 교체하세요.
+
 function openEditModal(characterId = null) {
     currentEditId = characterId;
     currentImageBase64 = null;
@@ -310,19 +312,44 @@ function openEditModal(characterId = null) {
     const descInput = document.getElementById('character-description');
     const imageUrlInput = document.getElementById('character-image-url');
     
-    // --- [수정] 아래 한 줄을 추가하세요 ---
+    // [수정 1] imagePreview 변수 정의
     const imagePreview = document.getElementById('image-preview');
-    // ------------------------------------
-    
     const previewImage = document.getElementById('preview-image');
     const fileNameSpan = document.getElementById('file-name');
     
-    // Reset form
+    // 폼 리셋
     form.reset();
-    imagePreview.classList.remove('active'); // <-- 이제 이 코드가 정상 작동합니다.
+    imagePreview.classList.remove('active');
     fileNameSpan.textContent = 'No file chosen';
     
-    // ... (이하 코드는 그대로 둡니다) ...
+    // [수정 2] 삭제되었던 if/else 로직 복원
+    if (characterId) {
+        // Edit mode
+        // [수정 3] '==' (느슨한 비교) 사용
+        const character = characters.find(c => c.id == characterId); 
+        if (character) {
+            title.textContent = 'Edit Character';
+            nameInput.value = character.name;
+            descInput.value = character.description || '';
+            imageUrlInput.value = character.imageUrl || '';
+            
+            if (character.imageUrl) {
+                previewImage.src = character.imageUrl;
+                imagePreview.classList.add('active');
+                currentImageBase64 = character.imageUrl;
+            }
+        } else {
+             // ID는 있지만 캐릭터를 못 찾은 경우 (혹은 버그)
+             title.textContent = 'Add New Character';
+        }
+    } else {
+        // Add mode
+        title.textContent = 'Add New Character';
+    }
+    
+    // [수정 4] 삭제되었던 모달 열기 코드 복원
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
 }
 
 function closeEditModal() {
