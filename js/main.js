@@ -206,10 +206,30 @@ function renderAdminGrid() {
 // Modal Functions
 // ====================
 
+// main.js 파일의 openCharacterModal 함수를 이 코드로 교체하세요.
+
 function openCharacterModal(characterId) {
-    const character = characters.find(c => c.id == characterId);
-    if (!character) return;
     
+    // --- 🕵️‍♂️ 디버깅을 위한 코드 ---
+    console.log('--- 1. 모달 열기 시도 ---');
+    console.log('클릭된 ID (타입:', typeof characterId, '):', characterId);
+    console.log('현재 characters 배열:', characters);
+    // --- 디버깅 종료 ---
+
+    // DB에서 가져온 c.id와 클릭으로 넘어온 characterId를 비교
+    const character = characters.find(c => c.id == characterId); // 느슨한 비교(==) 유지
+    
+    // --- 🕵️‍♂️ 디버깅을 위한 코드 ---
+    console.log('찾은 캐릭터 객체:', character);
+    // --- 디버깅 종료 ---
+
+    if (!character) {
+        console.error('--- 2. 캐릭터 찾기 실패! ---'); // <-- 실패 시 콘솔에 에러 표시
+        return;
+    }
+    
+    // 여기부터는 캐릭터를 찾았을 때 실행되는 코드
+    console.log('--- 3. 캐릭터 찾기 성공! 모달을 엽니다. ---');
     const modal = document.getElementById('character-modal');
     const nameEl = document.getElementById('modal-character-name');
     const descEl = document.getElementById('modal-character-description');
@@ -257,7 +277,7 @@ function openEditModal(characterId = null) {
     
     if (characterId) {
         // Edit mode
-        const character = characters.find(c => c.id === characterId);
+        const character = characters.find(c => c.id == characterId);
         if (character) {
             title.textContent = 'Edit Character';
             nameInput.value = character.name;
