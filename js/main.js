@@ -207,7 +207,7 @@ function renderAdminGrid() {
 // ====================
 
 function openCharacterModal(characterId) {
-    const character = characters.find(c => c.id === characterId);
+    const character = characters.find(c => c.id == characterId);
     if (!character) return;
     
     const modal = document.getElementById('character-modal');
