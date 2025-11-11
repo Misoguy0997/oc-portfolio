@@ -51,7 +51,7 @@ async function createCharacter(characterData) {
 
         if (response.ok) {
             showNotification('Character created successfully!', 'success');
-            return await response.json(); // 원본과 거의 동일
+            return true; // 원본과 거의 동일
         } else {
             throw new Error('Failed to create character');
         }
