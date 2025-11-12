@@ -107,7 +107,11 @@ a {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #1a1a1a 0%, #0f0f0f 100%);
+   /* [수정] 배경 이미지 설정 */
+    background-image: url('../images/Gemini_Generated_Image_f7ctnbf7ctnbf7ct.png'); /* 1. 이미지 경로 */
+    background-size: cover;                        /* 2. 화면에 꽉 차게 */
+    background-position: center center;            /* 3. 중앙 정렬 */
+    background-repeat: no-repeat;                  /* 4. 반복 없음 */
     position: relative;
     overflow: hidden;
 }
@@ -119,13 +123,18 @@ a {
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(74, 144, 226, 0.1) 0%, transparent 50%);
+    /* [수정] 0.5는 투명도입니다. 0.1~0.9 사이로 조절하세요. */
+    background: rgba(0, 0, 0, 0.5); 
+    
+    z-index: 1; /* 오버레이를 배경 위에 배치 */
 }
 
+/* 텍스트(콘텐츠)를 오버레이 위로 배치 */
 .hero-content {
     text-align: center;
-    z-index: 1;
     padding: 2rem;
+    position: relative; /* 이 속성이 중요합니다 */
+    z-index: 2; /* 콘텐츠를 오버레이 위에 배치 */
 }
 
 .hero-title {
