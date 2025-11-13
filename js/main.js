@@ -159,26 +159,6 @@ async function updateStory(id, storyData) {
     }
 }
 
-async function fetchStories() {
-    try {
-        showLoading();
-        const { data, error } = await supabaseClient
-            .from('stories') // 'characters' -> 'stories'
-            .select('*')
-            .order('createdAt', { ascending: false });
-
-        if (error) throw error;
-        stories = data || []; // 'characters' -> 'stories'
-        return stories;
-    } catch (error) {
-        console.error('Error fetching stories:', error);
-        showNotification('Failed to load stories', 'error');
-        return [];
-    } finally {
-        hideLoading();
-    }
-}
-
 async function createStory(storyData) {
     try {
         showLoading();
