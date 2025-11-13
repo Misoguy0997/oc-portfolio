@@ -719,3 +719,38 @@ footer p {
 .hidden {
     display: none !important;
 }
+
+/* ==================== 
+   Story Grid
+   ==================== */
+
+.story-grid {
+    display: grid;
+    /* 제목만 보이므로 4열로 설정 (조절 가능) */
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.story-card {
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid var(--border-color);
+    text-align: center;
+}
+
+.story-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent-color);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+}
+
+.story-card-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
