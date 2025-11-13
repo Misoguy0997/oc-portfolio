@@ -550,6 +550,20 @@ function openStoryModal(storyId) {
 
     document.getElementById('story-modal-title').textContent = story.title;
     document.getElementById('story-modal-content').textContent = story.content;
+    
+    // [수정] 이미지 표시 로직 추가
+    const imgContainer = document.getElementById('story-modal-image-container');
+    const imgEl = document.getElementById('story-modal-image');
+    
+    if (story.imageUrl) {
+        imgEl.src = story.imageUrl;
+        imgContainer.style.display = 'block'; // 보이기
+    } else {
+        imgEl.src = '';
+        imgContainer.style.display = 'none'; // 숨기기
+    }
+    // [수정] 완료
+    
     document.getElementById('story-modal').classList.add('active');
     document.body.style.overflow = 'hidden';
 }
@@ -565,7 +579,19 @@ function openStoryEditModal(storyId = null) {
     const title = document.getElementById('story-edit-modal-title');
     const form = document.getElementById('story-form');
     
+    // [수정] 이미지 폼 필드 가져오기
+    const imagePreview = document.getElementById('story-image-preview');
+    const previewImage = document.getElementById('story-preview-image');
+    const fileNameSpan = document.getElementById('story-file-name');
+    const imageUrlInput = document.getElementById('story-image-url');
+    
     form.reset();
+    
+    // [수정] 이미지 폼 필드 리셋
+    currentImageBase64 = null; // Base64 캐시 초기화
+    imagePreview.classList.remove('active');
+    fileNameSpan.textContent = 'No file chosen';
+    imageUrlInput.value = '';
     
     if (storyId) {
         // Edit mode
@@ -574,6 +600,14 @@ function openStoryEditModal(storyId = null) {
             title.textContent = 'Edit Story';
             document.getElementById('story-title').value = story.title;
             document.getElementById('story-content').value = story.content;
+            
+            // [수정] 기존 이미지 불러오기
+            if (story.imageUrl) {
+                previewImage.src = story.imageUrl;
+                imagePreview.classList.add('active');
+                imageUrlInput.value = story.imageUrl;
+                currentImageBase64 = story.imageUrl; // 기존 이미지를 Base64 캐시에 저장
+            }
         }
     } else {
         // Add mode
@@ -626,6 +660,43 @@ function handleImageUpload(event) {
         imagePreview.classList.add('active');
         
         document.getElementById('character-image-url').value = base64String;
+    };
+    reader.readAsDataURL(file);
+}
+
+// [추가] Story Image Upload Functions
+function handleStoryImageUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    // Check file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showNotification('Image size must be less than 5MB', 'error');
+        return;
+    }
+    
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+        showNotification('Please select a valid image file', 'error');
+        return;
+    }
+    
+    const fileNameSpan = document.getElementById('story-file-name'); // ID 변경
+    fileNameSpan.textContent = file.name;
+    
+    // Convert to base64
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const base64String = e.target.result;
+        currentImageBase64 = base64String; // 이 변수는 재사용
+        
+        // ID 변경
+        const previewImage = document.getElementById('story-preview-image');
+        const imagePreview = document.getElementById('story-image-preview');
+        previewImage.src = base64String;
+        imagePreview.classList.add('active');
+        
+        document.getElementById('story-image-url').value = base64String; // ID 변경
     };
     reader.readAsDataURL(file);
 }
@@ -684,7 +755,9 @@ async function handleStoryFormSubmit(event) {
     
     const title = document.getElementById('story-title').value.trim();
     const content = document.getElementById('story-content').value.trim();
-    
+    // [수정] 이미지 URL 가져오기
+    const imageUrl = currentImageBase64 || document.getElementById('story-image-url').value || '';
+
     if (!title || !content) {
         showNotification('Please fill in all required fields', 'error');
         return;
@@ -693,11 +766,11 @@ async function handleStoryFormSubmit(event) {
     try {
         if (currentStoryEditId) {
             // Update
-            const updatedData = { title, content };
+            const updatedData = { title, content, imageUrl }; // [수정] imageUrl 추가
             await updateStory(currentStoryEditId, updatedData);
         } else {
             // Create
-            const storyData = { title, content };
+            const storyData = { title, content, imageUrl }; // [수정] imageUrl 추가
             await createStory(storyData);
         }
         
@@ -862,6 +935,12 @@ function initEventListeners() {
 
     // Story Form submission
     document.getElementById('story-form').addEventListener('submit', handleStoryFormSubmit);
+
+    // Story Image upload
+    document.getElementById('story-upload-btn').addEventListener('click', function() {
+        document.getElementById('story-image').click();
+    });
+    document.getElementById('story-image').addEventListener('change', handleStoryImageUpload);
     
     // Image upload
     document.getElementById('upload-btn').addEventListener('click', function() {
