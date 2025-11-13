@@ -10,7 +10,9 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 // ====================
 
 let characters = [];
+let stories = [];
 let currentEditId = null;
+let currentStoryEditId = null;
 let currentImageBase64 = null;
 
 // ==================== 
@@ -90,6 +92,146 @@ async function deleteCharacter(id) {
     } catch (error) {
         console.error('Error deleting character:', error.message);
         showNotification('Failed to delete character. Check permissions.', 'error');
+        throw error;
+    } finally {
+        hideLoading();
+    }
+}
+
+// [추가] Story API Functions
+
+async function fetchStories() {
+    try {
+        showLoading();
+        const { data, error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .select('*')
+            .order('createdAt', { ascending: false });
+
+        if (error) throw error;
+        stories = data || []; // 'characters' -> 'stories'
+        return stories;
+    } catch (error) {
+        console.error('Error fetching stories:', error);
+        showNotification('Failed to load stories', 'error');
+        return [];
+    } finally {
+        hideLoading();
+    }
+}
+
+async function createStory(storyData) {
+    try {
+        showLoading();
+        const { error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .insert(storyData);
+        
+        if (error) throw error;
+        showNotification('Story created successfully!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Error creating story:', error.message);
+        showNotification('Failed to create story. Check permissions.', 'error');
+        throw error;
+    } finally {
+        hideLoading();
+    }
+}
+
+async function updateStory(id, storyData) {
+    try {
+        showLoading();
+        const { error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .update(storyData)
+            .eq('id', id);
+        
+        if (error) throw error;
+        showNotification('Story updated successfully!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Error updating story:', error.message);
+        showNotification('Failed to update story. Check permissions.', 'error');
+        throw error;
+    } finally {
+        hideLoading();
+    }
+}
+
+async function fetchStories() {
+    try {
+        showLoading();
+        const { data, error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .select('*')
+            .order('createdAt', { ascending: false });
+
+        if (error) throw error;
+        stories = data || []; // 'characters' -> 'stories'
+        return stories;
+    } catch (error) {
+        console.error('Error fetching stories:', error);
+        showNotification('Failed to load stories', 'error');
+        return [];
+    } finally {
+        hideLoading();
+    }
+}
+
+async function createStory(storyData) {
+    try {
+        showLoading();
+        const { error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .insert(storyData);
+        
+        if (error) throw error;
+        showNotification('Story created successfully!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Error creating story:', error.message);
+        showNotification('Failed to create story. Check permissions.', 'error');
+        throw error;
+    } finally {
+        hideLoading();
+    }
+}
+
+async function updateStory(id, storyData) {
+    try {
+        showLoading();
+        const { error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .update(storyData)
+            .eq('id', id);
+        
+        if (error) throw error;
+        showNotification('Story updated successfully!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Error updating story:', error.message);
+        showNotification('Failed to update story. Check permissions.', 'error');
+        throw error;
+    } finally {
+        hideLoading();
+    }
+}
+
+async function deleteStory(id) {
+    try {
+        showLoading();
+        const { error } = await supabaseClient
+            .from('stories') // 'characters' -> 'stories'
+            .delete()
+            .eq('id', id);
+        
+        if (error) throw error;
+        showNotification('Story deleted successfully!', 'success');
+        return true;
+    } catch (error) {
+        console.error('Error deleting story:', error.message);
+        showNotification('Failed to delete story. Check permissions.', 'error');
         throw error;
     } finally {
         hideLoading();
@@ -212,6 +354,74 @@ function renderAdminGrid() {
         const deleteButton = card.querySelector(`#delete-btn-${char.id}`);
         deleteButton.addEventListener('click', () => {
             confirmDelete(char.id, char.name);
+        });
+    });
+}
+
+// [추가] Story Render Functions
+
+function renderStoryGrid() {
+    const grid = document.getElementById('story-grid');
+    grid.innerHTML = ''; 
+
+    if (stories.length === 0) {
+        grid.innerHTML = `<div style="..."><p>No stories yet.</p></div>`; // 캐릭터 그리드와 유사하게 처리
+        return;
+    }
+    
+    stories.forEach(story => {
+        const card = document.createElement('div');
+        card.className = 'story-card';
+        card.addEventListener('click', () => {
+            openStoryModal(story.id);
+        });
+
+        card.innerHTML = `
+            <h3 class="story-card-title">${story.title}</h3>
+        `;
+        grid.appendChild(card);
+    });
+}
+
+function renderAdminStoryGrid() {
+    const grid = document.getElementById('admin-story-grid');
+    grid.innerHTML = ''; 
+
+    if (stories.length === 0) {
+        grid.innerHTML = `<div style="..."><p>No stories to manage yet.</p></div>`;
+        return;
+    }
+    
+    stories.forEach(story => {
+        const card = document.createElement('div');
+        card.className = 'admin-card';
+        
+        // 스토리 어드민 카드는 제목만 표시
+        card.innerHTML = `
+            <div class="admin-card-header">
+                <div class="admin-card-thumbnail"><i class="fas fa-book"></i></div>
+                <div>
+                    <h3 class="admin-card-title">${story.title}</h3>
+                </div>
+            </div>
+            <div class="admin-card-actions">
+                <button class="btn btn-secondary btn-sm" id="edit-story-btn-${story.id}">
+                    <i class="fas fa-edit"></i> Edit
+                </button>
+                <button class="btn btn-danger btn-sm" id="delete-story-btn-${story.id}">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </div>
+        `;
+        
+        grid.appendChild(card);
+
+        // 이벤트 리스너 연결
+        card.querySelector(`#edit-story-btn-${story.id}`).addEventListener('click', () => {
+            openStoryEditModal(story.id);
+        });
+        card.querySelector(`#delete-story-btn-${story.id}`).addEventListener('click', () => {
+            confirmStoryDelete(story.id, story.title);
         });
     });
 }
@@ -391,6 +601,54 @@ function closeEditModal() {
     currentImageBase64 = null;
 }
 
+// [추가] Story Modal Functions (Modal Functions 섹션에)
+
+function openStoryModal(storyId) {
+    const story = stories.find(s => s.id == storyId);
+    if (!story) return;
+
+    document.getElementById('story-modal-title').textContent = story.title;
+    document.getElementById('story-modal-content').textContent = story.content;
+    document.getElementById('story-modal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeStoryModal() {
+    document.getElementById('story-modal').classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function openStoryEditModal(storyId = null) {
+    currentStoryEditId = storyId;
+    const modal = document.getElementById('story-edit-modal');
+    const title = document.getElementById('story-edit-modal-title');
+    const form = document.getElementById('story-form');
+    
+    form.reset();
+    
+    if (storyId) {
+        // Edit mode
+        const story = stories.find(s => s.id == storyId);
+        if (story) {
+            title.textContent = 'Edit Story';
+            document.getElementById('story-title').value = story.title;
+            document.getElementById('story-content').value = story.content;
+        }
+    } else {
+        // Add mode
+        title.textContent = 'Add New Story';
+    }
+    
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeStoryEditModal() {
+    document.getElementById('story-edit-modal').classList.remove('active');
+    document.body.style.overflow = '';
+    currentStoryEditId = null;
+}
+
 // ==================== 
 // Image Upload Functions
 // ====================
@@ -480,6 +738,36 @@ async function handleFormSubmit(event) {
     }
 }
 
+// [추가] Story Form Submission (Form Submission 섹션에)
+async function handleStoryFormSubmit(event) {
+    event.preventDefault();
+    
+    const title = document.getElementById('story-title').value.trim();
+    const content = document.getElementById('story-content').value.trim();
+    
+    if (!title || !content) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    try {
+        if (currentStoryEditId) {
+            // Update
+            const updatedData = { title, content };
+            await updateStory(currentStoryEditId, updatedData);
+        } else {
+            // Create
+            const storyData = { title, content, createdAt: new Date().toISOString() };
+            await createStory(storyData);
+        }
+        
+        closeStoryEditModal();
+        await loadAndRenderAll(); // 전체 새로고침
+    } catch (error) {
+        console.error('Error submitting story form:', error);
+    }
+}
+
 // ==================== 
 // Delete Functions
 // ====================
@@ -496,6 +784,22 @@ async function handleDelete(characterId) {
         await loadAndRenderAll();
     } catch (error) {
         console.error('Error deleting character:', error);
+    }
+}
+
+// [추가] Story Delete Functions (Delete Functions 섹션에)
+function confirmStoryDelete(storyId, storyTitle) {
+    if (confirm(`Are you sure you want to delete "${storyTitle}"?`)) {
+        handleStoryDelete(storyId);
+    }
+}
+
+async function handleStoryDelete(storyId) {
+    try {
+        await deleteStory(storyId);
+        await loadAndRenderAll();
+    } catch (error) {
+        console.error('Error deleting story:', error);
     }
 }
 
@@ -540,8 +844,11 @@ function showNotification(message, type = 'info') {
 
 async function loadAndRenderAll() {
     await fetchCharacters();
+    await fetchStories();
     renderCharacterGallery();
+    renderStoryGrid();
     renderAdminGrid();
+    renderAdminStoryGrid();
 }
 
 // ==================== 
@@ -583,6 +890,12 @@ function initEventListeners() {
     document.getElementById('character-modal').addEventListener('click', function(e) {
         if (e.target === this) closeCharacterModal();
     });
+
+    // Story modal
+    document.getElementById('close-story-modal').addEventListener('click', closeStoryModal);
+    document.getElementById('story-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeStoryModal();
+    });
     
     // Edit modal
     document.getElementById('close-edit-modal').addEventListener('click', closeEditModal);
@@ -590,12 +903,25 @@ function initEventListeners() {
     document.getElementById('edit-modal').addEventListener('click', function(e) {
         if (e.target === this) closeEditModal();
     });
+
+    // Story Edit modal
+    document.getElementById('close-story-edit-modal').addEventListener('click', closeStoryEditModal);
+    document.getElementById('cancel-story-edit').addEventListener('click', closeStoryEditModal);
+    document.getElementById('story-edit-modal').addEventListener('click', function(e) {
+        if (e.target === this) closeStoryEditModal();
+    });
     
     // Add character button
     document.getElementById('add-character-btn').addEventListener('click', () => openEditModal());
+
+    // Add story button
+    document.getElementById('add-story-btn').addEventListener('click', () => openStoryEditModal());
     
     // Form submission
     document.getElementById('character-form').addEventListener('submit', handleFormSubmit);
+
+    // Story Form submission
+    document.getElementById('story-form').addEventListener('submit', handleStoryFormSubmit);
     
     // Image upload
     document.getElementById('upload-btn').addEventListener('click', function() {
@@ -609,6 +935,8 @@ function initEventListeners() {
             closeCharacterModal();
             closeEditModal();
             closeLoginModal();
+            closeStoryModal();
+            closeStoryEditModal();
         }
     });
 }
