@@ -737,7 +737,7 @@ async function handleStoryFormSubmit(event) {
             await updateStory(currentStoryEditId, updatedData);
         } else {
             // Create
-            const storyData = { title, content};
+            const storyData = { title, content };
             await createStory(storyData);
         }
         
