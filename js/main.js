@@ -159,45 +159,6 @@ async function updateStory(id, storyData) {
     }
 }
 
-async function createStory(storyData) {
-    try {
-        showLoading();
-        const { error } = await supabaseClient
-            .from('stories') // 'characters' -> 'stories'
-            .insert(storyData);
-        
-        if (error) throw error;
-        showNotification('Story created successfully!', 'success');
-        return true;
-    } catch (error) {
-        console.error('Error creating story:', error.message);
-        showNotification('Failed to create story. Check permissions.', 'error');
-        throw error;
-    } finally {
-        hideLoading();
-    }
-}
-
-async function updateStory(id, storyData) {
-    try {
-        showLoading();
-        const { error } = await supabaseClient
-            .from('stories') // 'characters' -> 'stories'
-            .update(storyData)
-            .eq('id', id);
-        
-        if (error) throw error;
-        showNotification('Story updated successfully!', 'success');
-        return true;
-    } catch (error) {
-        console.error('Error updating story:', error.message);
-        showNotification('Failed to update story. Check permissions.', 'error');
-        throw error;
-    } finally {
-        hideLoading();
-    }
-}
-
 async function deleteStory(id) {
     try {
         showLoading();
@@ -706,7 +667,6 @@ async function handleFormSubmit(event) {
                 name,
                 description,
                 imageUrl,
-                createdAt: new Date().toISOString()
             };
             await createCharacter(characterData);
         }
