@@ -18,6 +18,7 @@
             </div>
             <div class="nav-links">
                 <a href="#gallery" class="nav-link">Gallery</a>
+                <a href="#stories" class="nav-link">Stories</a>
                 <a href="#admin" id="nav-manage-link" class="nav-link admin-link" style="display: none;">
                     <i class="fas fa-cog"></i> Manage
                 </a>
@@ -47,6 +48,17 @@
         </div>
     </section>
 
+    <!-- Stories Section -->
+    </section>
+
+    <section id="stories">
+        <div class="container">
+            <h2 class="section-title">Character Stories</h2>
+            <div id="story-grid" class="story-grid">
+                </div>
+        </div>
+    </section>
+    
     <!-- Character Detail Modal -->
     <div id="character-modal" class="modal">
         <div class="modal-content">
@@ -73,9 +85,17 @@
             
             <button id="add-character-btn" class="btn btn-primary">
                 <i class="fas fa-plus"></i> Add New Character
-            </button>
+            </button> <div id="admin-grid" class="admin-grid">
+                </div>
 
-            <div id="admin-grid" class="admin-grid">
+            <hr style="border-color: var(--border-color); margin: 4rem 0;">
+            
+            <h2 class="section-title">Story Management</h2>
+            <button id="add-story-btn" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Story
+            </button>
+            
+            <div id="admin-story-grid" class="admin-grid">
                 </div>
         </div>
     </section>
@@ -127,6 +147,52 @@
         </div>
     </div>
 
+    <!-- Add/Edit Story Modal -->
+    <div id="story-edit-modal" class="modal">
+        <div class="modal-content edit-modal-content">
+            <button class="modal-close" id="close-story-edit-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <h2 id="story-edit-modal-title">Add New Story</h2>
+                <form id="story-form">
+                    <div class="form-group">
+                        <label for="story-title">Story Title *</label>
+                        <input type="text" id="story-title" required placeholder="스토리의 제목을 입력하세요...">
+                    </div>
+                    <div class="form-group">
+                        <label for="story-content">Story Content *</label>
+                        <textarea id="story-content" rows="12" required placeholder="스토리의 본문을 입력하세요..."></textarea>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Save Story
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="cancel-story-edit">
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Story Detail Modal -->
+    <div id="story-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" id="close-story-modal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-body">
+                <div class="modal-info" style="flex-basis: 100%; max-width: 100%;">
+                    <h2 id="story-modal-title"></h2>
+                    <div id="story-modal-content" class="character-description" style="white-space: pre-wrap; max-height: 70vh; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Loading Spinner -->
     <div id="loading" class="loading-spinner" style="display: none;">
         <div class="spinner"></div>
