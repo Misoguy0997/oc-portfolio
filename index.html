@@ -117,21 +117,6 @@
                         <label for="character-description">Description *</label>
                         <textarea id="character-description" rows="8" required placeholder="Tell us about your character..."></textarea>
                     </div>
-
-                    <div class="form-group">
-                        <label for="story-image">Story Illustration</label>
-                        <div class="image-upload-container">
-                            <input type="file" id="story-image" accept="image/*" style="display: none;">
-                            <button type="button" class="btn btn-secondary" id="story-upload-btn">
-                                <i class="fas fa-upload"></i> Choose Image
-                            </button>
-                            <span id="story-file-name" class="file-name">No file chosen</span>
-                        </div>
-                        <div id="story-image-preview" class="image-preview">
-                            <img id="story-preview-image" src="" alt="">
-                        </div>
-                        <input type="hidden" id="story-image-url">
-                    </div>
                     
                     <div class="form-group">
                         <label for="character-image">Character Image</label>
@@ -177,6 +162,21 @@
                     <div class="form-group">
                         <label for="story-content">Story Content *</label>
                         <textarea id="story-content" rows="12" required placeholder="스토리의 본문을 입력하세요..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story-image">Story Illustration</label>
+                        <div class="image-upload-container">
+                            <input type="file" id="story-image" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-secondary" id="story-upload-btn">
+                                <i class="fas fa-upload"></i> Choose Image
+                            </button>
+                            <span id="story-file-name" class="file-name">No file chosen</span>
+                        </div>
+                        <div id="story-image-preview" class="image-preview">
+                            <img id="story-preview-image" src="" alt="">
+                        </div>
+                        <input type="hidden" id="story-image-url">
                     </div>
                     
                     <div class="form-actions">
